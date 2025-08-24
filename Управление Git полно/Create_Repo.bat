@@ -23,7 +23,6 @@ if not exist "%PROJECT_PATH%" (
 )
 
 cd /d "%PROJECT_PATH%"
-echo Текущая папка: %CD%
 
 REM ===== Инициализация локального репозитория =====
 if not exist ".git" (
@@ -33,7 +32,6 @@ if not exist ".git" (
 )
 
 REM ===== Создание локальных правил исключения =====
-echo Создание правил исключения файлов...
 
 REM Создаем папку .git/info если её нет
 if not exist ".git\info" mkdir ".git\info"
@@ -60,13 +58,9 @@ echo Правила исключения настроены локально
 REM ===== Проверка и настройка git =====
 if exist ".git" (
 rem удаляет ссылку на удалённый репозиторий origin из локального git-конфига. На сервере репозиторий остается.
-    echo Найден существующий git репозиторий
-    echo Удаление старого remote origin...
     git remote remove origin >nul 2>&1  
 rem удаляет из индекса все подготовленные к комиту файлы. На диске файлы остаются.
-    echo Очистка индекса...
     git rm -r --cached . >nul 2>&1      
-    echo Старые настройки очищены
 )
 
 REM ===== Создание README.md =====
@@ -90,18 +84,12 @@ echo 3. Используйте в своих проектах
 ) > README.md
 
 REM ===== Добавление файлов с учетом .gitignore =====
-echo.
-echo Добавление файлов в индекс...
 git add .
 
 REM ===== Проверка что будет закоммичено =====
-echo.
-echo Файлы для коммита:
 git diff --cached --name-only
 
 REM ===== Коммит =====
-echo.
-echo Создание первого коммита...
 git commit -m "feat: Первый коммит - инициализация репозитория
 - Добавлен README.md с описанием проекта
 - Настроен .gitignore для исключения служебных файлов"
@@ -116,8 +104,6 @@ if %errorlevel% neq 0 (
 )
 
 REM ===== Создание репозитория на GitHub =====
-echo.
-echo Создание репозитория на GitHub...
 gh repo create %REPO_NAME% --%REPO_VISIBILITY% --description "%PROJECT_DESCRIPTION%" --source=. --push
 
 if %errorlevel% neq 0 (
