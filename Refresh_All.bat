@@ -10,7 +10,7 @@ rem git diff --name-status HEAD^ HEAD rem показывает список фа
 
 git add -A
 git commit -m "Обновил все файлы" 
-git push origin master
+git push origin main
 
 if %errorlevel% equ 0 echo ✅ Файлы успешно обновлены! else echo ❌ Ошибка при обновлении
 
