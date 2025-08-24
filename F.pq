@@ -7,7 +7,7 @@ let
 	F_Form 	= let path = "G:\=EXCEL BI - мои проекты\2024.01 - Анализ Отчетности\2. PQ запросы\F_Form.pq" 
 			  in Expression.Evaluate(Text.FromBinary(File.Contents(path)), #shared),	
 
-Параметры = [ // 
+Параметры = [ //  
 	GetParam       = // универсальная функция. Но и в других тоже еще есть полезные моменты
 		/*
 			Описание:
