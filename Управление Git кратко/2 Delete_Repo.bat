@@ -2,7 +2,7 @@
 
 REM GitHub CLI: Удаление репозитория без подтверждения
 
-gh repo delete "F:\+ Метдразработки 2025-2026" --yes
+gh repo delete "https://github.com/Medvedevav632/PQ_function" --yes
 
 pause
 
