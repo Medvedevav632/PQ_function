@@ -2,6 +2,7 @@ let
 // todo Сделать тип функций Extract - будет извлекать из текста например: Даты, Фамилии, ... (куда извлекать, в новую колонку или оставлять тут)
 // тут, для возможности сослаться на функцию из этой библиотеки, но с возможностью вставки кода в проект
 //	= let path = "G:\=EXCEL BI - мои проекты\2024.01 - Анализ Отчетности\2. PQ запросы\F.pq" in 	Expression.Evaluate(Text.FromBinary(File.Contents(path)), #shared)
+// 	F = Expression.Evaluate(Text.FromBinary(Binary.Buffer(Web.Contents("https://raw.githubusercontent.com/Medvedevav632/PQ_function/main/" & "F.pq"))), #shared)
 	F      	= let path = "G:\=EXCEL BI - мои проекты\2024.01 - Анализ Отчетности\2. PQ запросы\F.pq" 
 			  in 	Expression.Evaluate(Text.FromBinary(File.Contents(path)), #shared),
 	F_Form 	= let path = "G:\=EXCEL BI - мои проекты\2024.01 - Анализ Отчетности\2. PQ запросы\F_Form.pq" 
@@ -947,7 +948,7 @@ UTIL  	  = [ // Мои утилиты
 		in to
 	],
 
-MyPack    = [ // моя библиотека функций
+MyPack    = [ // моя библиотека функций 🔥
 //	UNIVERSAL LOADER 🔹 
 	Folder.LoadFiles 	 = // подключаемся к папке (от 03.02.2025)	убрать проверку на input null. Хоть один аргумент всегда будет/должен быть
 		/* 
@@ -1261,7 +1262,7 @@ MyPack    = [ // моя библиотека функций
 			result = Value.ReplaceType(func,fnType)
 		in 	result,
 
-//	FOLDER 🔥
+//	FOLDER 
 	Files.SmartFolder    = // возвращает таблицу с данными о файлах в папке или SharePoint используя Folder.Files или Folder.Contents (Monky,"Приручи данные")
 		/*
 			For more information, Or to purchase a copy of this add-in, visit https://monkeytools.ca
@@ -1461,7 +1462,7 @@ MyPack    = [ // моя библиотека функций
 						  else Chosen[#"Folder Path"] & Chosen[Name]
 		in
 			Return,
-//	FILE ⚡ (на входе путь к файлу)
+//	FILE (на входе путь к файлу)
 	Files.ExtensionFile	 = // возвращает расширение файла
 		(FilePath)=>Text.Lower(List.Reverse(Splitter.SplitTextByDelimiter(".")(FilePath)){0}),
 	Files.ContentInFile  = // возвращает структуру файла xlsx 
@@ -1538,7 +1539,7 @@ MyPack    = [ // моя библиотека функций
 			DocumentedFunction = Value.ReplaceType(fnSmartFile,fnDocumentation)
 		in
 			DocumentedFunction,
-// 	ADDS_COLUMNS 📌
+// 	ADDS_COLUMNS
 	fxAddMultiColumns 	 = // создание нескольких столбцов
 		/*
 			? можно сразу задавать положение столбца?! проверить
