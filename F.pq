@@ -960,6 +960,10 @@ MyPack    = [ // моя библиотека функций 🔥
 				5. в книгах excel оставляем только листы (Sheet), в csv после скрипта питона один лист берется, первый видимый
 			
 			Пример:	
+				Рабочий вариант от26.10.2025
+				= F[Folder.LoadFiles]([Path = "G:\=EXCEL BI - мои проекты\2000 - МИНИ проекты\2025.10 - Минское райпо\Исходники\XLSX", 
+					FileExtension = "xlsx", SubFolders  = false, ExpandSheets = false, SheetNames   = true, Step = 5, FilterFunction = (x)=>Text.Contains(x[Item], "99")] )
+
 				Вариант 1. Путь задан, все остальное по false. "\" в конце можно пропустить, не важно
 				= F[Folder.LoadFiles]([Path = "G:\=EXCEL BI\", 
 				Extension = "xlsx", SubFolders = false, ExpandSheet = false, ShowSheet = false, Step = 0])
@@ -1059,6 +1063,7 @@ MyPack    = [ // моя библиотека функций 🔥
 							Text.AfterDelimiter([Extension], ".") = EXTENSION 	// оставляем нужные форматы файлов
 							and [Attributes][Hidden] = false 				 	// убираем скрытые
 							and not Text.StartsWith([Name], "~$")			 	// убираем временные
+							and Text.Contains([Name], "бал")
 					),
 				
 				//  4. Trans			фильтруем колонки + меняем формат колонок 
@@ -1095,21 +1100,22 @@ MyPack    = [ // моя библиотека функций 🔥
 									}),
 
 						//  fXLSX   подлючаемся к папке (оставляем XLSX, фильтруем подтаблицы по полю "Name")
-							fXLSX = 	Table.TransformColumns(Trans, {"Content", (x)=> 
-										let Binary 	= 	Excel.Workbook(x),
-											Select	= 	Table.SelectRows(Binary,  each 
-															not Text.Contains([Name], "$")	// убираем именованные диапазоны
-															and [Kind]="Sheet"				// оставляем листы
-														),
-											Select2	= 	Table.SelectRows(Select,  each 
-														// 	фильтруем листы в файлах xlsx функцией из аргументов. Если не задана, то все листы
-														// 	если Record содержит поле с таким именем и значение поля не null, то 
-															if Record.HasFields(input, {"FilterFunction"}) and (input[FilterFunction] <> null)
-															then input[FilterFunction](_) // true или false. FilterFunction = (x)=>true
-															else Text.Length(_[Name]) > 1 // true или fxAllSheets(_) или Text.Contains(_[Name], "04")
-														)
-										in	Select2 	// [Data]{0} оставляем первый лист
-									}),
+							fXLSX = 	
+								Table.TransformColumns(Trans, {"Content", (x)=> 
+									let Binary 	= 	Excel.Workbook(x),
+										Select	= 	Table.SelectRows(Binary,  each 
+														not Text.Contains([Name], "$")	// убираем именованные диапазоны
+														and [Kind]="Sheet"				// оставляем листы
+													),
+										Select2	= 	Table.SelectRows(Select,  each 
+													// 	фильтруем листы в файлах xlsx функцией из аргументов. Если не задана, то все листы
+													// 	если Record содержит поле с таким именем и значение поля не null, то 
+														if Record.HasFields(input, {"FilterFunction"}) and (input[FilterFunction] <> null)
+														then input[FilterFunction](_) // true или false. FilterFunction = (x)=>true
+														else Text.Length(_[Name]) > 1 // true или fxAllSheets(_) или Text.Contains(_[Name], "04")
+													)
+									in	Select2 	// [Data]{0} оставляем первый лист
+								}),
 						
 						//  fCSV    загрузка файлов из папки с CSV файлами (параметр Columns=... пропускаю? сеператор ",")
 							fCSV =  Table.TransformColumns(FilteredRows, {"Content", (file)=>
