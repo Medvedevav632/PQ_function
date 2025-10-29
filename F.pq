@@ -1,9 +1,9 @@
 let
 // todo Сделать тип функций Extract - будет извлекать из текста например: Даты, Фамилии, ... (куда извлекать, в новую колонку или оставлять тут)
 // тут, для возможности сослаться на функцию из этой библиотеки, но с возможностью вставки кода в проект
-//	= let path = "G:\=EXCEL BI - мои проекты\2024.01 - Анализ Отчетности\2. PQ запросы\F.pq" in 	Expression.Evaluate(Text.FromBinary(File.Contents(path)), #shared)
+//	= let path = "G:\=EXCEL BI - мои проекты\= PQ - база знаний =\F.pq" in 	Expression.Evaluate(Text.FromBinary(File.Contents(path)), #shared)
 // 	F = Expression.Evaluate(Text.FromBinary(Binary.Buffer(Web.Contents("https://raw.githubusercontent.com/Medvedevav632/PQ_function/main/" & "F.pq"))), #shared)
-	F      	= let path = "G:\=EXCEL BI - мои проекты\2024.01 - Анализ Отчетности\2. PQ запросы\F.pq" 
+	F      	= let path = "G:\=EXCEL BI - мои проекты\= PQ - база знаний =\F.pq" 
 			  in 	Expression.Evaluate(Text.FromBinary(File.Contents(path)), #shared),
 	F_Form 	= let path = "G:\=EXCEL BI - мои проекты\2024.01 - Анализ Отчетности\2. PQ запросы\F_Form.pq" 
 			  in Expression.Evaluate(Text.FromBinary(File.Contents(path)), #shared),	
@@ -952,6 +952,7 @@ MyPack    = [ // моя библиотека функций 🔥
 //	UNIVERSAL LOADER 🔹 
 	Folder.LoadFiles 	 = // подключаемся к папке (от 03.02.2025)	убрать проверку на input null. Хоть один аргумент всегда будет/должен быть
 		/* 
+			todo сделать аргумент фильтра файлов по имени листа
 			Описание:
 				1. подключаемся к папке с файлами по имени датасета или по полному пути
 				2. выбираем номер шага загрузки. По умолчанию выгружаем последний шаг
@@ -1000,7 +1001,8 @@ MyPack    = [ // моя библиотека функций 🔥
 							ExpandSheets   = false,	 // листы книг не раскрываем в отдельные строки
 							SheetNames     = false,	 // колонку с именами листов не показываем
 							Step		   = 0,		 // возвращаем последний шаг функции
-							FilterFunction = null    // функция фильтрации листов
+							FilterFunction = null,   // функция фильтрации листов
+							MaskNameFile   = ""      // маска имени файла
 						],
 					
 				// 	АРГУМЕНТЫ Шаг 2. Проверка на корректность
@@ -1033,6 +1035,7 @@ MyPack    = [ // моя библиотека функций 🔥
 					SHOWSHEET	= GetValue(finalOptions, "SheetNames", 		Logical.From),	// показывать колонку с листами в конце
 					STEP     	= GetValue(finalOptions, "Step", 		   	Number.From	),	// номер шага 
 					FUNC	    = GetValue(finalOptions, "FilterFunction", 	Function.From),
+					MASKNAME    = GetValue(finalOptions, "MaskNameFile", 	Text.From	), // маска имени файла
 										
 				//	1. path				формируем полный и относительный path к папке или подпапкам
 					/* Описание шага:
@@ -1063,7 +1066,8 @@ MyPack    = [ // моя библиотека функций 🔥
 							Text.AfterDelimiter([Extension], ".") = EXTENSION 	// оставляем нужные форматы файлов
 							and [Attributes][Hidden] = false 				 	// убираем скрытые
 							and not Text.StartsWith([Name], "~$")			 	// убираем временные
-							and Text.Contains([Name], "бал")
+							// and (MASKNAME = "" or Text.Contains([Name], MASKNAME))  // фильтруем файлы по маске имени
+							// and Text.Contains([Name], MASKNAME)			 	    
 					),
 				
 				//  4. Trans			фильтруем колонки + меняем формат колонок 
@@ -1230,13 +1234,14 @@ MyPack    = [ // моя библиотека функций 🔥
 					   // При наличии AllowedValues SampleValues не нужен, этот текст не виден, так как есть список выбора
 					inputType	= 
 						type [	
-							Path				   = (type nullable text meta [Documentation.FieldCaption = "Путь к папке", Documentation.SampleValues = {"C:\DataFiles\SubFolder"}]),
-							optional FileExtension = (type nullable text meta [Documentation.FieldCaption = "ТипФайла", Documentation.SampleValues = {"csv"}, Documentation.AllowedValues = { "xlsx", "csv" } ]),
-							optional SubFolders    = (type logical 	   meta [Documentation.FieldCaption = "Обрабатывать подтаблицы, true / false", Documentation.SampleValues = {"true / false"}, Documentation.AllowedValues = {true,false} ]),
-							optional ExpandSheets  = (type logical 	   meta [Documentation.FieldCaption = "Извлекать листы, true / false", Documentation.SampleValues = {"true / false"},Documentation.AllowedValues = {true,false} ]),
-							optional SheetNames    = (type logical 	   meta [Documentation.FieldCaption = "Показывать колонку с именали листов, true / false", Documentation.SampleValues = {"true / false"}, Documentation.AllowedValues = {true,false} ]),
-							optional Step		   = (type number 	   meta [Documentation.FieldCaption = "НомерШага (от 1 до 8)", Documentation.SampleValues = {"9"}, Documentation.AllowedValues = {0..9}]),
-							optional FilterFunction  = (type nullable function meta [Documentation.FieldCaption = "Функция фильтрации файлов", Documentation.SampleValues = {"..."}])
+							Path				    = (type nullable text  meta [Documentation.FieldCaption = "Путь к папке", Documentation.SampleValues = {"C:\DataFiles\SubFolder"}]),
+							optional FileExtension  = (type nullable text  meta [Documentation.FieldCaption = "ТипФайла", Documentation.SampleValues = {"csv"}, Documentation.AllowedValues = { "xlsx", "csv" } ]),
+							optional SubFolders     = (type logical 	   meta [Documentation.FieldCaption = "Обрабатывать подтаблицы, true / false", Documentation.SampleValues = {"true / false"}, Documentation.AllowedValues = {true,false} ]),
+							optional ExpandSheets   = (type logical 	   meta [Documentation.FieldCaption = "Извлекать листы, true / false", Documentation.SampleValues = {"true / false"},Documentation.AllowedValues = {true,false} ]),
+							optional SheetNames     = (type logical 	   meta [Documentation.FieldCaption = "Показывать колонку с именали листов, true / false", Documentation.SampleValues = {"true / false"}, Documentation.AllowedValues = {true,false} ]),
+							optional Step		    = (type number 	       meta [Documentation.FieldCaption = "НомерШага (от 1 до 8)", Documentation.SampleValues = {"9"}, Documentation.AllowedValues = {0..9}]),
+							optional FilterFunction = (type nullable function meta [Documentation.FieldCaption = "Функция фильтрации файлов", Documentation.SampleValues = {"..."}]),
+							optional MaskNameFile   = (type nullable text  meta  [Documentation.FieldCaption = "Маска имени файла", Documentation.SampleValues = {"баланс"} ])
 
 						],
 
