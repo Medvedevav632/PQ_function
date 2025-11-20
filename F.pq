@@ -1133,7 +1133,7 @@ MyPack    = [ // моя библиотека функций 🔥
 						//  fPAR    загрузка файлов из папки с .parquet файлами
 							fPAR =  Table.TransformColumns(Trans, 
 										{"Content", (file)=>
-											let tbl = Parquet.Document([Content])
+											let tbl = Parquet.Document(file)
 											in  Table.PromoteHeaders(tbl)
 											, type table
 										}
@@ -1167,20 +1167,20 @@ MyPack    = [ // моя библиотека функций 🔥
 					Result 	= 	Record.Field([
 							tbl  = SelColumns,
 							xls  = let 
-								// разворачиваем листы  - по умолчанию не разворачиваем (если null или не указан) //* тип табдле слетает!
-								exp = 	if   not EXPANDSHEET
-										then Table.AddColumn(tbl, "SheetNames", (x) => Text.Combine(x[Data]?[Name]?, ",")?? "", type text)
-										else Table.ExpandTableColumn(tbl, "Data", {"Data", "Name"},{"Data", "SheetNames"}),
+								// 	разворачиваем листы  - по умолчанию не разворачиваем (если null или не указан) //* тип табдле слетает!
+									exp = 	if   not EXPANDSHEET
+											then Table.AddColumn(tbl, "SheetNames", (x) => Text.Combine(x[Data]?[Name]?, ",")?? "", type text)
+											else Table.ExpandTableColumn(tbl, "Data", {"Data", "Name"},{"Data", "SheetNames"}),
 								
 								//  показываем колонку "SheetNames" - по умолчанию не показываем
-								sh = 	if  SHOWSHEET = false or SHOWSHEET = null
-										then Table.RemoveColumns(exp,{"SheetNames"})
-										else exp,
+									sh = 	if  SHOWSHEET = false or SHOWSHEET = null
+											then Table.RemoveColumns(exp,{"SheetNames"})
+											else exp,
 
 								//  показываем колонку "Folder Path" с относительным путем - по умолчанию не показываем
-								sub = 	if SUBFOLDERS = false or SUBFOLDERS = null
-										then Table.RemoveColumns(sh,{"Folder Path"})
-										else sh
+									sub = 	if SUBFOLDERS = false or SUBFOLDERS = null
+											then Table.RemoveColumns(sh,{"Folder Path"})
+											else sh
 								in  sub,
 							
 							xlsx = let 
