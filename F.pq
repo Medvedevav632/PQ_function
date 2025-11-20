@@ -1145,7 +1145,7 @@ MyPack    = [ // моя библиотека функций 🔥
 											xlsx = fXLSX, 
 											xls  = fXLS, 
 											csv  = fCSV,
-											par  = fPAR
+											parquet  = fPAR
 										], 
 											Text.From(EXTENSION), "Error"
 									)
@@ -1215,7 +1215,7 @@ MyPack    = [ // моя библиотека функций 🔥
 									then Table.RemoveColumns(tbl,{"Folder Path"})
 									else tbl,
 							
-							par  = 	if SUBFOLDERS = false or SUBFOLDERS = null
+							parquet  = 	if SUBFOLDERS = false or SUBFOLDERS = null
 									then Table.RemoveColumns(tbl,{"Folder Path"})
 									else tbl			
 						], 
