@@ -1134,7 +1134,7 @@ MyPack    = [ // моя библиотека функций 🔥
 							fPAR =  Table.TransformColumns(Trans, 
 										{"Content", (file) =>
 											try 
-												let tbl = Parquet.Document(file)
+												let tbl = 1 // Parquet.Document(file)
 												in Table.PromoteHeaders(tbl)
 											otherwise 
 												#table({"Error"}, {{"Parquet not supported in this environment"}})
