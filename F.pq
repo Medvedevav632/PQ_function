@@ -1073,7 +1073,7 @@ MyPack    = [ // моя библиотека функций 🔥
 								{"Folder Path",  (x)=> Text.AfterDelimiter(x, "\", {2, RelativePosition.FromEnd}), type text}
 							}),
 				
-				//  5. TransformBinary	преобразуем bin в таблицу, фильтруем строки в подтаблицах // оставляем один лист
+				//  5. TransformBinary	преобразуем binary в таблицу, фильтруем строки в подтаблицах // оставляем один лист
 					TransformBinary = [
 						//	функции фильтровки листов в книгах XLSX в подтаблицах 
 						 	fxAllSheets	= (x)=> Text.Length(x[Name]) > 1, // имя больше 1 символа
@@ -1132,9 +1132,14 @@ MyPack    = [ // моя библиотека функций 🔥
 									),
 						//  fPAR    загрузка файлов из папки с .parquet файлами
 							fPAR =  Table.TransformColumns(Trans, 
-										{"Content", (file)=>
-											let tbl = Parquet.Document(file)
-											in  Table.PromoteHeaders(tbl)
+										{"Content", (file) =>
+											try 
+												Table.PromoteHeaders(Parquet.Document(file))
+											otherwise 
+												#table(
+													{"Column1"}, 
+													{{"Error: Parquet files are not supported in Excel. Please use Power BI Desktop."}}
+												)
 											, type table
 										}
 									),
