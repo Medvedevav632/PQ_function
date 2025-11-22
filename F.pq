@@ -1134,12 +1134,10 @@ MyPack    = [ // моя библиотека функций 🔥
 							fPAR =  Table.TransformColumns(Trans, 
 										{"Content", (file) =>
 											try 
-												Table.PromoteHeaders(Parquet.Document(file))
+												let tbl = Parquet.Document(file)
+												in Table.PromoteHeaders(tbl)
 											otherwise 
-												#table(
-													{"Column1"}, 
-													{{"Error: Parquet files are not supported in Excel. Please use Power BI Desktop."}}
-												)
+												#table({"Error"}, {{"Parquet not supported in this environment"}})
 											, type table
 										}
 									),
