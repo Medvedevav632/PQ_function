@@ -952,6 +952,7 @@ UTIL  	  = [ // Мои утилиты
 	],
 
 MyPack    = [ // моя библиотека функций 🔥
+	Readme = "= MyPack =",
 //	UNIVERSAL LOADER 🔹 
 	Folder.LoadFiles 	 = // подключаемся к папке (от 01.11.2025)	убрать проверку на input null. Хоть один аргумент всегда будет/должен быть
 	// 🔥🔥 todo  разделитель сделать в шаге 5!! 
@@ -1134,7 +1135,7 @@ MyPack    = [ // моя библиотека функций 🔥
 							fPAR =  Table.TransformColumns(Trans, 
 										{"Content", (file) =>
 											try 
-												let tbl = #table({"Err"}, {{"1"}}) // Parquet.Document(file)
+												let  Parquet.Document(file)// tbl = #table({"Err"}, {{"1"}})
 												in Table.PromoteHeaders(tbl)
 											otherwise 
 												#table({"Error"}, {{"Parquet not supported in this environment"}})
