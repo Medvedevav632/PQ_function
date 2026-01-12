@@ -1118,24 +1118,26 @@ MyPack    = [ // моя библиотека функций 🔥
 								}),
 						
 						//  fCSV    //! папка кажется не та Trans загрузка файлов из папки с CSV файлами (параметр Columns=... пропускаю? сеператор ",")
-							fCSV =  Table.TransformColumns(FilteredRows, {"Content", (file)=>
-										Table.PromoteHeaders(
-											Csv.Document(file, 
-												[	
-													Columns     = null, 			// Количество или имена столбцов {"A","B","C"}
-													Delimiter	= ";", 				// Разделитель, по умолчанию ","
-													QuoteStyle	= QuoteStyle.None, 	// если QuoteStyle.Csv
-													Encoding	= 65001 			// Кодировка UTF-8
-													
-												]
-											)
-										), type table}
+							fCSV =  Table.TransformColumns(Trans, 
+										{"Content", (file)=>
+											Table.PromoteHeaders(
+												Csv.Document(file, 
+													[	
+														Columns     = null, 			// Количество или имена столбцов {"A","B","C"}
+														Delimiter	= ";", 				// Разделитель, по умолчанию ","
+														QuoteStyle	= QuoteStyle.None, 	// если QuoteStyle.Csv
+														Encoding	= 65001 			// Кодировка UTF-8
+													]
+												)
+											), type table
+										}
 									),
-						//  fPAR    загрузка файлов из папки с .parquet файлами
+						//  fPAR    загрузка файлов из папки с .parquet файлами // нужно ли поднимать заголовки?!
 							fPAR =  Table.TransformColumns(Trans, 
 										{"Content", (file) =>
 											try 
-												let tbl = Parquet.Document(file) // tbl = #table({"Err"}, {{"1"}})
+												let tbl = #table({"Err"}, {{"1"}})
+												// let tbl = Parquet.Document(file)
 												in  Table.PromoteHeaders(tbl)
 											otherwise 
 												#table({"Error"}, {{"Parquet not supported in this environment"}})
